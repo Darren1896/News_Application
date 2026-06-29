@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: lightfeed_db
+      MYSQL_ROOT_PASSWORD: mysqlwork
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pmysqlwork"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  web:
+    build: .
+    command: >
+      sh -c "
+      while ! python -c \"import socket; s=socket.socket(); s.settimeout(2); s.connect(('db', 3306))\" 2>/dev/null; do
+        echo 'Waiting for MySQL to accept connections...';
+        sleep 2;
+      done;
+      python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

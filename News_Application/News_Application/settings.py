@@ -81,7 +81,7 @@ DATABASES = {
         "NAME": "lightfeed_db",
         "USER": "root",
         "PASSWORD": "mysqlwork",
-        "HOST": "localhost",
+        "HOST": "db",
         "PORT": "3306",
     }
 }
@@ -128,6 +128,7 @@ STATICFILES_DIRS = [
 ]
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "updates@lightfeed.com"
 
 AUTH_USER_MODEL = "LightFeed.User"
 
