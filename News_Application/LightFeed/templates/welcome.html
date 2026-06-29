@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="welcome-container">
+    <!-- 🏠 Page-Specific Greeting Layout Header -->
+    <h1>Welcome to your LightFeed Dashboard!</h1>
+    
+    <div class="user-info-bar" style="margin-bottom: 20px; padding: 10px; background: #e8f0fe; border-radius: 4px; display: inline-block;">
+        Logged in as: <strong>{{ request.user.username }}</strong> 
+        (<span style="text-transform: capitalize; font-weight: bold;">{{ request.user.role }}</span>)
+    </div>
+    
+    <p>Choose a workspace below to see its options.</p>
+
+    <div class="group-grid">
+        <a href="{% url 'LightFeed:news_feed_hub' %}" class="group-button">
+            <span class="group-icon">📰</span>
+            <h3>News Feed</h3>
+        </a>
+        <p>Read articles, browse publishers and journalists</p>
+
+
+        {% if request.user.role == 'editor' %}
+            <a href="{% url 'LightFeed:publishers_hub' %}" class="group-button">
+                <span class="group-icon">🛠️</span>
+                <h3>Publishers</h3>
+            </a>
+            <p>Create and manage publisher outlets</p>
+            
+        {% endif %}
+
+        {% if request.user.role == 'editor' or request.user.role == 'journalist' %}
+            <a href="{% url 'LightFeed:articles_hub' %}" class="group-button">
+                <span class="group-icon">✏️</span>
+                <h3>Articles</h3>
+            </a>
+            <p>{% if request.user.role == 'editor' %}Oversee and approve all platform articles{% else %}Write and track your story drafts{% endif %}</p>
+            
+
+            <a href="{% url 'LightFeed:newsletters_hub' %}" class="group-button">
+                <span class="group-icon">📩</span>
+                <h3>Newsletters</h3>
+            </a>
+            <p>{% if request.user.role == 'editor' %}Approve and dispatch pending bulletins{% else %}Compose and track your bulletins{% endif %}</p>
+            
+        {% endif %}
+    </div>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

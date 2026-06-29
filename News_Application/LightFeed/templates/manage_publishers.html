@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Publishers - LightFeed</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <h2>📢 Your Registered Publishers</h2>
+    
+    <p><a href="{% url 'LightFeed:create_publisher' %}" class="btn-add">➕ Register a New Publisher</a></p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Publisher Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for publisher in editor_pub %}
+            <tr>
+                <td><strong>{{ publisher.name }}</strong></td>
+                <td>
+                    {% if publisher.description %}
+                        {{ publisher.description }}
+                    {% else %}
+                        <span style="color: #9aa0a6;">No description provided.</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'LightFeed:edit_publisher' pub_id=publisher.id %}" class="btn">✏️ Edit</a> | 
+                    <a href="{% url 'LightFeed:delete_publisher' pub_id=publisher.id %}" 
+                       onclick="return confirm('Are you sure you want to permanently delete this publisher profile?');" 
+                       class="btn btn-delete">❌ Remove</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="empty-row">You haven't registered any publisher networks yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <p><a href="{% url 'LightFeed:welcome' %}" class="btn">⬅️ Back to Dashboard</a></p>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+
+</body>
+</html>
+

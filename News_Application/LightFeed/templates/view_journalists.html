@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journalists Directory - LightFeed</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="header-box">
+        <h1>Journalists</h1>
+        <a href="{% url 'LightFeed:welcome' %}" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    <p style="margin-bottom: 30px; color: #5f6368;">Browse journalists on LightFeed. Follow a journalist to track their published stories directly within your personalized stream feed.</p>
+
+    {% if journalists %}
+        <div class="publisher-grid">
+            {% for journalist in journalists %}
+                <div class="publisher-card">
+                    <div>
+                        <div class="publisher-title">✍️ {{ journalist.username }}</div>
+                        <div class="meta-editor">
+                            {% with pub_count=journalist.allowed_publishers.count %}
+                                Writes for {{ pub_count }} publisher{{ pub_count|pluralize }}
+                            {% endwith %}
+                        </div>
+                    </div>
+
+                    <!-- Follow Relationship Management Hook -->
+                    <div>
+                        {% if journalist in request.user.subscribed_journalists.all %}
+                            <a href="{% url 'LightFeed:toggle_subscription' 'journalist' journalist.id %}" class="btn-subscribe btn-subscribed">✓ Following (click to unfollow)</a>
+                        {% else %}
+                            <a href="{% url 'LightFeed:toggle_subscription' 'journalist' journalist.id %}" class="btn-subscribe">+ Follow Journalist</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No Journalists Active</h3>
+            <p>There are currently no journalist profiles catalogued in the system database registries.</p>
+        </div>
+    {% endif %}
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+
+</body>
+</html>

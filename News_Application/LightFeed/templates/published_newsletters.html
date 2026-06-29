@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="table-card">
+    <p><a href="{% url 'LightFeed:welcome' %}">← Back to Dashboard</a></p>
+    <h2>📩 Published Newsletters</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Bulletin Title</th>
+                <th>Source Outlet</th>
+                <th>Author</th>
+                <th>Curated Articles</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nl in newsletters %}
+            <tr>
+                <td><strong>{{ nl.title }}</strong></td>
+                <td>{{ nl.publisher.name }}</td>
+                <td>{{ nl.author.username }}</td>
+                <td>
+                    {% if nl.description %}<p>{{ nl.description|truncatewords:20 }}</p>{% endif %}
+                    <ul>
+                        {% for article in nl.articles.all %}
+                            <li>{{ article.title }}</li>
+                        {% empty %}
+                            <li class="text-muted">No articles curated</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No newsletters have been published yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

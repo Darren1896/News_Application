@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="welcome-container">
+    <p><a href="{% url 'LightFeed:welcome' %}">← Back to Dashboard</a></p>
+    <h1>📰 News Feed</h1>
+    <p>Catch up on stories, or browse who's publishing on LightFeed.</p>
+
+    <div class="hub-grid">
+        <a href="{% url 'LightFeed:view_articles' %}" class="hub-card">
+            <h3>Read News Articles</h3>
+        </a>
+        <p>Explore all active breaking stories across the platform.</p>
+        
+        <a href="{% url 'LightFeed:published_newsletters' %}" class="hub-card">
+            <h3>Read Newsletters</h3>
+        </a>
+        <p>Browse dispatched newsletter bulletins from your favorite outlets.</p>
+        
+        <a href="{% url 'LightFeed:view_publishers' %}" class="hub-card">
+            <h3>View Publishers</h3>
+        </a>
+        <p>Browse registered media networks and follow the ones you like.</p>
+        
+        <a href="{% url 'LightFeed:view_journalists' %}" class="hub-card">
+            <h3>View Journalists</h3>
+        </a>
+        <p>Browse journalist profiles and follow your favorites.</p>
+        
+    </div>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

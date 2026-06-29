@@ -1,0 +1,94 @@
+body {
+    background-color: lightyellow;
+    font-family: arial 
+
+}
+
+h1 {
+    text-align: center;
+}
+
+
+footer {
+    text-align: center;
+}
+
+.container {
+    max-width: 1100px;
+    width: 100%;   
+    margin: 0 auto;
+}
+
+/* ===== Dashboard group buttons (Step 5: grouped navigation) ===== */
+.group-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0 30px;
+}
+
+.group-button {
+    display: block;
+    padding: 24px 20px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #202124;
+    text-align: center;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.group-button:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+.group-button .group-icon {
+    font-size: 2em;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.group-button h3 {
+    margin: 0 0 4px;
+}
+
+.group-button p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #5f6368;
+}
+
+/* ===== Hub pages (e.g. Publishers hub, Articles hub) ===== */
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.hub-card {
+    display: block;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #202124;
+}
+
+.hub-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.hub-card h3 {
+    margin: 0 0 6px;
+}
+
+.hub-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #5f6368;
+}
+

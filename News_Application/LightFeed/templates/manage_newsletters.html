@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="table-card">
+    <h2>📩 Editorial Bulletins & Newsletter Registry</h2>
+    
+    {% if request.user.role == 'journalist' %}
+        <p><a href="{% url 'LightFeed:add_newsletter' %}" class="btn-primary">➕ Compose New Bulletin</a></p>
+    {% endif %}
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Bulletin Title</th>
+                <th>Source Outlet</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Action Management</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nl in newsletters %}
+            <tr>
+                <td><strong>{{ nl.title }}</strong></td>
+                <td>{{ nl.publisher.name }}</td>
+                <td>{{ nl.author.username }}</td>
+                <td>
+                    {% if nl.status == 'approved' %}
+                        <span class="badge badge-success">Live Distributed</span>
+                    {% else %}
+                        <span class="badge badge-warning">Pending Review</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if request.user.role == 'editor' %}
+                        {% if nl.status == 'draft' %}
+                            <a href="{% url 'LightFeed:approve_newsletter' newsletter_id=nl.id %}" class="btn-action">✔️ Approve & Dispatch</a>
+                        {% endif %}
+                        <a href="{% url 'LightFeed:edit_newsletter' newsletter_id=nl.id %}" class="btn-action">✏️ Edit</a>
+                        <a href="{% url 'LightFeed:delete_newsletter' newsletter_id=nl.id %}" class="btn-action" onclick="return confirm('Delete this newsletter?');">🗑️ Delete</a>
+                    {% elif nl.author == request.user %}
+                        <a href="{% url 'LightFeed:edit_newsletter' newsletter_id=nl.id %}" class="btn-action">✏️ Edit</a>
+                        <a href="{% url 'LightFeed:delete_newsletter' newsletter_id=nl.id %}" class="btn-action" onclick="return confirm('Delete this newsletter?');">🗑️ Delete</a>
+                    {% else %}
+                        <span class="text-muted">No actions available</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No newsletters or system bulletins currently found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

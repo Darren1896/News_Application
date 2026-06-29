@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="table-card">
+    <p><a href="{% url 'LightFeed:manage_newsletters' %}">← Back to Bulletins</a></p>
+    <h2>📩 Compose New Bulletin</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Bulletin Title</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="pub_id">Source Outlet</label>
+            <select id="pub_id" name="pub_id" required>
+                <option value="">-- Choose a Publisher --</option>
+                {% for publisher in publishers %}
+                    <option value="{{ publisher.id }}">{{ publisher.name }}</option>
+                {% endfor %}
+            </select>
+            {% if not publishers %}
+                <p style="font-size: 0.85em; color: #5f6368;">You are not currently assigned to any publisher, so you can't compose a bulletin yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="description">Bulletin Description</label>
+            <textarea id="description" name="description" rows="4" placeholder="A short editorial summary of this digest (optional)"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Curate Articles</label>
+            {% if available_articles %}
+                <p style="font-size: 0.85em; color: #5f6368;">Select the approved articles to include in this bulletin. Only articles matching the publisher you choose above will be saved.</p>
+                {% for article in available_articles %}
+                    <div>
+                        <label>
+                            <input type="checkbox" name="article_ids" value="{{ article.id }}">
+                            {{ article.title }}
+                            <span style="font-size: 0.85em; color: #5f6368;">({{ article.publisher.name }})</span>
+                        </label>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="font-size: 0.85em; color: #5f6368;">No approved articles are available to curate yet.</p>
+            {% endif %}
+        </div>
+
+        <button type="submit" {% if not publishers %}disabled{% endif %}>Submit for Review</button>
+    </form>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

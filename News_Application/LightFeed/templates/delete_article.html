@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Article</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+<div class="container">
+    <p><a href="{% url 'LightFeed:welcome' %}">← Back to Dashboard</a></p>
+    <h1>Delete An Article</h1>
+
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    {% if success %}<div class="success">{{ success }}</div>{% endif %}
+
+    <form method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this story? This cannot be undone.');">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="article_id">Which story would you like to delete?</label>
+            <select id="article_id" name="article_id" required>
+                <option value="">-- Choose an article to remove --</option>
+                {% for article in articles %}
+                    <option value="{{ article.id }}">{{ article.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit">Permanently Delete</button>
+    </form>
+    <footer>
+        <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+    </footer>
+</div>
+</body>
+</html>

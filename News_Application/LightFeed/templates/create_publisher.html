@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head><title>Create Publisher</title>
+<link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+    <h2>🚀 Register a New Publisher</h2>
+    
+    {% if error %}
+        <p style="color: red;"><strong>Error:</strong> {{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="name">Publisher Name:</label><br>
+            <input type="text" id="pub_id" name="pub_name" required placeholder="e.g. News Planet">
+        </div>
+        <br>
+        <div>
+            <label for="description">Publisher Description:</label><br>
+            <textarea id="description" name="description" rows="3" cols="40" placeholder="Juicy stories"></textarea>
+        </div>
+        <br>
+        <div>
+            <label for="editor_ids">Assign Editors (optional):</label><br>
+            <select id="editor_ids" name="editor_ids" multiple size="5">
+                {% for editor in available_editors %}
+                    <option value="{{ editor.id }}">{{ editor.username }}</option>
+                {% endfor %}
+            </select>
+            <p style="font-size: 0.85em; color: #5f6368;">You will automatically be assigned as an editor of this publisher. Ctrl/Cmd-click to select multiple.</p>
+        </div>
+        <br>
+        <div>
+            <label for="journalist_ids">Assign Journalists (optional):</label><br>
+            <select id="journalist_ids" name="journalist_ids" multiple size="5">
+                {% for journalist in available_journalists %}
+                    <option value="{{ journalist.id }}">{{ journalist.username }}</option>
+                {% endfor %}
+            </select>
+            <p style="font-size: 0.85em; color: #5f6368;">Ctrl/Cmd-click to select multiple.</p>
+        </div>
+        <br>
+        <button type="submit">Launch Publisher</button>
+    </form>
+    <p><a href="{% url 'LightFeed:welcome' %}">Cancel</a></p>
+    <footer>
+        <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+    </footer>
+</body>
+</html>

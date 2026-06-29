@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All News Articles</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+<div class="container">
+    <a href="{% url 'LightFeed:welcome' %}" class="back-link">← Back to Dashboard</a>
+    <h1>Latest News</h1>
+
+    {% if articles %}
+        {% for article in articles %}
+            <div class="article-card">
+                <h2>{{ article.title }}</h2>
+                <div class="meta">Written by: <strong>{{ article.author.username }}</strong></div>
+                <p>{{ article.content|linebreaks }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No articles have been published yet.</p>
+    {% endif %}
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="table-card">
+    <p><a href="{% url 'LightFeed:manage_newsletters' %}">← Back to Bulletins</a></p>
+    <h2>✏️ Edit Bulletin</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Bulletin Title</label>
+            <input type="text" id="title" name="title" value="{{ newsletter.title }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Bulletin Description</label>
+            <textarea id="description" name="description" rows="4">{{ newsletter.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Curate Articles</label>
+            {% if available_articles %}
+                {% for article in available_articles %}
+                    <div>
+                        <label>
+                            <input type="checkbox" name="article_ids" value="{{ article.id }}" {% if article in newsletter.articles.all %}checked{% endif %}>
+                            {{ article.title }}
+                        </label>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="font-size: 0.85em; color: #5f6368;">No approved articles are available from this publisher to curate.</p>
+            {% endif %}
+        </div>
+
+        <button type="submit">Save Changes</button>
+    </form>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

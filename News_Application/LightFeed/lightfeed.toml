@@ -1,0 +1,7 @@
+[tool.ruff]
+# set maximum line length for linter
+line-length = 79
+
+[tool.ruff]
+# Set maximum line length gor formatter
+line-length = 79

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="welcome-container">
+    <p><a href="{% url 'LightFeed:welcome' %}">← Back to Dashboard</a></p>
+    <h1>✏️ Articles</h1>
+
+    <div class="hub-grid">
+        {% if request.user.role == 'journalist' %}
+            <a href="{% url 'LightFeed:add_article' %}" class="hub-card">
+                <h3>📝 Pitch & Write Article</h3>
+            </a>
+            <p>Compose and file a fresh news report — assign it to a publisher, or publish independently.</p>
+            
+            <a href="{% url 'LightFeed:manage_articles' %}" class="hub-card">
+                <h3>🔄 Manage Your Stories</h3>
+            </a>
+            <p>Track submission statuses, edit preloaded fields, or delete drafts.</p>
+            
+        {% elif request.user.role == 'editor' %}
+            <a href="{% url 'LightFeed:manage_articles' %}" class="hub-card">
+                <h3>✏️ Manage System Articles</h3>
+            </a>
+            <p>Oversight panel to review, modify, or approve all platform items.</p>
+            
+        {% endif %}
+    </div>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

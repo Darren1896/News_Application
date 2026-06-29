@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Articles - LightFeed</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+
+</head>
+<body>
+
+<div class="container">
+    <h2>📰 Article Workspace Management</h2>
+    
+    {% if not is_editor %}
+        <!-- Journalists see a quick shortcut button to write a new piece -->
+        <p><a href="{% url 'LightFeed:add_article' %}" class="btn-add">📝 Write New Article</a></p>
+    {% endif %}
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Article Title</th>
+                <th>Author</th>
+                <th>Assigned Publisher</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr>
+                <td><strong>{{ article.title }}</strong></td>
+                <td>{{ article.author.username }}</td>
+                <td>
+                    {% if article.publisher %}
+                    {{ article.publisher.name }}
+                    {% else %}
+                    <span style="color: #9aa0a6;">Unassigned</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if article.approved %}
+                    <span class="badge badge-published">Live</span>
+                    {% else %}
+                    <span class="badge badge-draft">Pending Review</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- 🛠️ DYNAMIC ACTIONS MANAGEMENT OVERHAUL -->
+            
+                    <!-- Context 1: The article is a draft and the logged-in user is an EDITOR -->
+                    {% if not article.approved and is_editor %}
+                    <a href="{% url 'LightFeed:publish_draft' article_id=article.id %}" 
+                    style="background-color: #34a853; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold;">
+                    ✔️ Approve & Publish
+                    </a>
+                    <span style="color: #ddd; margin: 0 5px;">|</span>
+                    {% endif %}
+                    <!-- Standard management tools for authors or general editors -->
+                    <a href="{% url 'LightFeed:edit_article_detail' article_id=article.id %}" class="btn">✏️ Edit</a> 
+                    <a href="{% url 'LightFeed:delete_article_page' article_id=article.id %}" 
+                    onclick="return confirm('Are you sure you want to permanently delete this story?');" 
+                    class="btn btn-delete">❌ Remove
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-row">No articles are currently logged within your workspace scope directory.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+    
+    <p><a href="{% url 'LightFeed:welcome' %}" class="btn">⬅️ Back to Dashboard</a></p>
+</div>
+    <footer>
+        <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>

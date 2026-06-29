@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head><title>Edit Publisher</title>
+<link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+    <h2>✏️ Modify Publisher Details</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="name">Update Name:</label><br>
+            <input type="text" id="name" name="name" value="{{ publisher.name }}" required>
+        </div>
+        <br>
+        <div>
+            <label for="description">Update Description:</label><br>
+            <textarea id="description" name="description" rows="3" cols="40">{{ publisher.description }}</textarea>
+        </div>
+        <br>
+        <button type="submit">Save Changes</button>
+    </form>
+    <p><a href="{% url 'LightFeed:manage_publishers' %}">Cancel</a></p>
+    <footer>
+        <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+    </footer>
+</body>
+</html>

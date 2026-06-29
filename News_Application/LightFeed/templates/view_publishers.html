@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publications Directory - LightFeed</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="header-box">
+        <h1>Media Networks</h1>
+        <a href="{% url 'LightFeed:welcome' %}" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    <p style="margin-bottom: 30px; color: #5f6368;">Explore registered news channels on LightFeed. Subscribe to networks to track breaking news updates directly within your personalized stream feed.</p>
+
+    {% if publishers %}
+        <div class="publisher-grid">
+            {% for publisher in publishers %}
+                <div class="publisher-card">
+                    <div>
+                        <div class="publisher-title">📣 {{ publisher.name }}</div>
+                        <div class="meta-editor">
+                            Managed by:
+                            {% for editor in publisher.editors.all %}
+                                {{ editor.username }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                No editor assigned yet
+                            {% endfor %}
+                        </div>
+                        
+                        <p class="description">
+                            {% if publisher.description %}
+                                {{ publisher.description|truncatewords:30 }}
+                            {% else %}
+                                No background information profile has been documented for this publisher network yet.
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Follow Relationship Management Hook -->
+                    <div>
+                        {% if publisher in request.user.subscribed_publishers.all %}
+                            <a href="{% url 'LightFeed:toggle_subscription' 'publisher' publisher.id %}" class="btn-subscribe btn-subscribed">✓ Following (click to unfollow)</a>
+                        {% else %}
+                            <a href="{% url 'LightFeed:toggle_subscription' 'publisher' publisher.id %}" class="btn-subscribe">+ Follow Network</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No Publishers Active</h3>
+            <p>There are currently no media network profiles catalogued in the system database registries.</p>
+        </div>
+    {% endif %}
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LightFeed System Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+    <!-- DECLUTTERED TOP NAVIGATION HEADER BAR SYSTEM -->
+    <header class="main-header">
+        <div class="logo">LightFeed 📰</div>
+        <nav class="navbar">
+            <a href="{% url 'LightFeed:welcome' %}">🏠 Dashboard</a>
+            <a href="{% url 'LightFeed:view_articles' %}">📰 Public Feed</a>
+            
+            {% if request.user.role == 'editor' or request.user.role == 'journalist' %}
+                <a href="{% url 'LightFeed:manage_newsletters' %}">📩 Newsletters Workspace</a>
+            {% endif %}
+            
+            <span class="user-tag">👤 {{ request.user.username }} ({{ request.user.get_role_display }})</span>
+            <a href="{% url 'LightFeed:logout' %}" class="logout-link">🚪 Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

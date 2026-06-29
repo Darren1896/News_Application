@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="welcome-container">
+    <p><a href="{% url 'LightFeed:welcome' %}">← Back to Dashboard</a></p>
+    <h1>📩 Newsletters</h1>
+
+    <div class="hub-grid">
+        <a href="{% url 'LightFeed:manage_newsletters' %}" class="hub-card">
+            <h3>📋 Manage Newsletters</h3>
+        </a>
+        <p>
+            {% if request.user.role == 'editor' %}
+                Review pending bulletins and approve them for dispatch.
+            {% else %}
+                Compose a new bulletin, or track the status of ones you've already filed.
+            {% endif %}
+        </p>
+        
+    </div>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

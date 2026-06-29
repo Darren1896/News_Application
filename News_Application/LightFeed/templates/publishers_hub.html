@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="welcome-container">
+    <p><a href="{% url 'LightFeed:welcome' %}">← Back to Dashboard</a></p>
+    <h1>🛠️ Publishers</h1>
+    <p>Create new publisher outlets, or manage the ones you already run.</p>
+
+    <div class="hub-grid">
+        <a href="{% url 'LightFeed:create_publisher' %}" class="hub-card">
+            <h3>➕ Create Publisher</h3>
+        </a>
+        <p>Register a brand new news outlet into the system.</p>
+        
+        <a href="{% url 'LightFeed:manage_publishers' %}" class="hub-card">
+            <h3>📋 Manage Publishers</h3>
+        </a>
+        <p>Review, edit, or delete existing publisher data rows.</p>
+        
+    </div>
+</div>
+<footer>
+    <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+</footer>
+{% endblock %}

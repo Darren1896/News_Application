@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Article Details</title>
+    <link rel="stylesheet" href="{% static 'css/LightFeed.css' %}">
+</head>
+<body>
+<div class="container">
+    <p><a href="{% url 'LightFeed:welcome' %}">← Back to Dashboard</a></p>
+    <h1>Edit Your Articles</h1>
+
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    {% if success %}<div class="success">{{ success }}</div>{% endif %}
+    
+    {% block content %}
+    <div class="form-wrapper">
+        <h2>✏️ Revise Article Details</h2>
+        <p>Modifying draft data context for: <strong>{{ article.title }}</strong></p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="title">Article Title:</label>
+                <input type="text" id="title" name="title" value="{{ article.title }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Story Content:</label>
+                <textarea id="content" name="content" rows="10" required>{{ article.content }}</textarea>
+            </div>
+            <button type="submit" class="btn-save">💾 Save Data Modifications</button>
+            <a href="{% url 'LightFeed:view_articles' %}" class="btn-cancel">Cancel</a>
+        </form>
+    </div>
+    {% endblock %}
+
+    <footer>
+        <p class="text-center">© 2026 LightFeed. All Rights Reserved</p>
+    </footer>
+</div>
+</body>
+</html>
