@@ -135,3 +135,20 @@ The DRF API is available under `/api/`, including:
 - `POST /api/token/` or `/api/login/` — obtain an auth token
 
 API requests use Token Authentication: include `Authorization: Token <your-token>`.
+
+### Build the Documentation ###
+Navigate to your documentation directory (usually docs) and generate the HTML files:
+```bash
+cd docs
+make html
+```
+(note on windows it's ".\make")
+
+###  View the Output
+Once the build finishes successfully, open the generated homepage in your browser:
+
+Path: docs/_build/html/index.html
+
+Linux/Mac Command: open _build/html/index.htmlWindows 
+
+Command: start _build/html/index.html
