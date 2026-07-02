@@ -10,7 +10,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pmysqlwork"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--silent"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,6 +26,7 @@ services:
         echo 'Waiting for MySQL to accept connections...';
         sleep 2;
       done;
+      python manage.py migrate --no-input &&
       python manage.py runserver 0.0.0.0:8000
       "
     volumes:
