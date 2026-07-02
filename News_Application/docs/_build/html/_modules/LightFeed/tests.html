@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LightFeed.tests &mdash; News_Application 00.00.01 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d7bb8d4d"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            News_Application
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">LightFeed</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">News_Application</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">LightFeed.tests</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for LightFeed.tests</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Group</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.test</span><span class="w"> </span><span class="kn">import</span> <span class="n">APITestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.authtoken.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Token</span> <span class="k">as</span> <span class="n">AuthToken</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Publisher</span><span class="p">,</span> <span class="n">Article</span><span class="p">,</span> <span class="n">Newsletter</span>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LightFeedAPITestSuite</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Automated test engine validating role-based authorization parameters,</span>
+<span class="sd">    isolated subscription filters, newsletter storage integrity, and Option 2</span>
+<span class="sd">    post-approval background webhook delivery automation pipelines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.setUp">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.setUp">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up standardized, role-isolated test configurations</span>
+<span class="sd">        and database entities.&quot;&quot;&quot;</span>
+        <span class="c1"># 1. Instantiate Authorization Group Framework Nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readers_group</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Readers&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">journalists_group</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Journalists&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editors_group</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Group</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Editors&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 2. Instantiate Base Model Profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span>
+            <span class="n">username</span><span class="o">=</span><span class="s2">&quot;test_reader&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;r@test.com&quot;</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;reader&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">journalist</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span>
+            <span class="n">username</span><span class="o">=</span><span class="s2">&quot;test_journ&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;j@test.com&quot;</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;journalist&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span>
+            <span class="n">username</span><span class="o">=</span><span class="s2">&quot;test_editor&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;e@test.com&quot;</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;editor&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">readers_group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">journalists_group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors_group</span><span class="p">)</span>
+
+        <span class="c1"># 3. Secure Core API Authentication Bearer Tokens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader_token</span> <span class="o">=</span> <span class="n">AuthToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">journ_token</span> <span class="o">=</span> <span class="n">AuthToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor_token</span> <span class="o">=</span> <span class="n">AuthToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">)</span>
+
+        <span class="c1"># 4. Instantiate Publishers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span> <span class="o">=</span> <span class="n">Publisher</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alpha News&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Main Corporate Outlet&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher_beta</span> <span class="o">=</span> <span class="n">Publisher</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Beta News&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Secondary Niche Outlet&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Map multi-user assignments using Many-to-Many helper methods</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span><span class="o">.</span><span class="n">editors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span><span class="o">.</span><span class="n">journalists</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher_beta</span><span class="o">.</span><span class="n">editors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publisher_beta</span><span class="o">.</span><span class="n">journalists</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">)</span>
+
+        <span class="c1"># 5. Instantiate Articles containing explicitly</span>
+        <span class="c1"># isolated clean unique URL slugs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">article_published</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Published Story Alpha&quot;</span><span class="p">,</span>
+            <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;published-story-alpha&quot;</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Breaking news production copy.&quot;</span><span class="p">,</span>
+            <span class="n">author</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">,</span>
+            <span class="n">publisher</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span><span class="p">,</span>
+            <span class="n">approved</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">article_draft</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Pending Draft Beta&quot;</span><span class="p">,</span>
+            <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;pending-draft-beta&quot;</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Work in progress editorial framework.&quot;</span><span class="p">,</span>
+            <span class="n">author</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">,</span>
+            <span class="n">publisher</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">publisher_beta</span><span class="p">,</span>
+            <span class="n">approved</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 6. Instantiate Newsletters assigned to a specific publisher</span>
+        <span class="c1"># workspace, curated from existing approved articles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newsletter</span> <span class="o">=</span> <span class="n">Newsletter</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Weekly Pulse&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Digest copy layout text.&quot;</span><span class="p">,</span>
+            <span class="n">author</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">,</span>
+            <span class="n">publisher</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span><span class="p">,</span>
+            <span class="n">status</span><span class="o">=</span><span class="s2">&quot;draft&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newsletter</span><span class="o">.</span><span class="n">articles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">article_published</span><span class="p">)</span>
+
+        <span class="c1"># 7. Reverse Endpoint Mapping Signatures</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_url</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;LightFeed:article-list&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribed_url</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;LightFeed:article-subscribed-feed&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detail_url</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">pk</span><span class="p">:</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;LightFeed:article-detail&#39;</span><span class="p">,</span>
+                                             <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;pk&#39;</span><span class="p">:</span> <span class="n">pk</span><span class="p">})</span></div>
+
+
+    <span class="c1"># =====================================================================</span>
+    <span class="c1"># ROLE MANAGEMENT TESTS</span>
+    <span class="c1"># =====================================================================</span>
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_unauthenticated_access_fails">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_unauthenticated_access_fails">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unauthenticated_access_fails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;FAIL CASE: Assures traffic without credentials</span>
+<span class="sd">        receives an HTTP 401 response.&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_reader_retrieve_all_published_only">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_reader_retrieve_all_published_only">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_reader_retrieve_all_published_only</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: Assures readers can only</span>
+<span class="sd">        view live approved publications.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span>
+            <span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;Token &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader_token</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="c1"># Should count the single live story block, ignoring unapproved drafts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_reader_subscribed_feed_isolation">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_reader_subscribed_feed_isolation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_reader_subscribed_feed_isolation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: Readers isolate</span>
+<span class="sd">        streams matching their followed sources.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">subscribed_publishers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span>
+            <span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;Token &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader_token</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscribed_url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_subscribed_feed_includes_followed_journalists_independent_work">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_subscribed_feed_includes_followed_journalists_independent_work">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_subscribed_feed_includes_followed_journalists_independent_work</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: Following a journalist (not a publisher) should</span>
+<span class="sd">        still surface that journalist&#39;s independently-published articles,</span>
+<span class="sd">        confirming the independent-publishing and follow features work</span>
+<span class="sd">        together correctly.&quot;&quot;&quot;</span>
+        <span class="n">independent_article</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Independent Followed Story&quot;</span><span class="p">,</span>
+            <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;independent-followed-story&quot;</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;No publisher attached.&quot;</span><span class="p">,</span>
+            <span class="n">author</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">,</span>
+            <span class="n">publisher</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">approved</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">subscribed_journalists</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">journalist</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span>
+            <span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;Token &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader_token</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscribed_url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">returned_titles</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">independent_article</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">returned_titles</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_journalist_can_create_article">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_journalist_can_create_article">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_journalist_can_create_article</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: Journalist uploads content,</span>
+<span class="sd">        defaulting fields to draft.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span>
+            <span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;Token &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">journ_token</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New Global Breakthrough&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Scientists document...&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;publisher&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_url</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;New Global Breakthrough&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;New Global Breakthrough&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">approved</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_journalist_can_publish_independently">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_journalist_can_publish_independently">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_journalist_can_publish_independently</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: Journalist submits an article with no publisher</span>
+<span class="sd">        assigned at all, confirming independent publishing works end</span>
+<span class="sd">        to end through the API (not just the model layer).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span>
+            <span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;Token &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">journ_token</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Independent Investigation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Filed without any publisher backing.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_url</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">)</span>
+
+        <span class="n">created</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Independent Investigation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">created</span><span class="o">.</span><span class="n">publisher</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created</span><span class="o">.</span><span class="n">approved</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_reader_cannot_create_article">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_reader_cannot_create_article">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_reader_cannot_create_article</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;FAIL CASE: Assures regular accounts cannot inject</span>
+<span class="sd">        stories into the directory.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span>
+            <span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;Token &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader_token</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Illegal Headline&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;publisher&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publisher_alpha</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_url</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_403_FORBIDDEN</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_editor_can_update_article_attributes">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_editor_can_update_article_attributes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_editor_can_update_article_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: System editors hold universal</span>
+<span class="sd">        oversight capabilities.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span>
+            <span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="s1">&#39;Token &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor_token</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Approved Title Beta Change&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated verified production body copy.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;publisher&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publisher_beta</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detail_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">article_draft</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                                   <span class="n">payload</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">article_draft</span><span class="o">.</span><span class="n">refresh_from_db</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">article_draft</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="s2">&quot;Approved Title Beta Change&quot;</span>
+                         <span class="p">)</span></div>
+
+
+    <span class="c1"># =====================================================================</span>
+    <span class="c1"># NEWSLETTER TESTING</span>
+    <span class="c1"># =====================================================================</span>
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_newsletter_integrity_constraints">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_newsletter_integrity_constraints">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_newsletter_integrity_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: Assures newsletter models map properties cleanly.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newsletter</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="s2">&quot;Weekly Pulse&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newsletter</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s2">&quot;draft&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># =====================================================================</span>
+    <span class="c1"># AUTOMATION PIPELINE WEBHOOK TESTING</span>
+    <span class="c1"># =====================================================================</span>
+<div class="viewcode-block" id="LightFeedAPITestSuite.test_approval_workflow_triggers_automations">
+<a class="viewcode-back" href="../../LightFeed.html#LightFeed.tests.LightFeedAPITestSuite.test_approval_workflow_triggers_automations">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;LightFeed.views.requests.post&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;LightFeed.views.send_mail&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_approval_workflow_triggers_automations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_send_mail</span><span class="p">,</span>
+                                                    <span class="n">mock_requests_post</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SUCCESS CASE: View execution runs mail blasts</span>
+<span class="sd">        and X webhook posts.&quot;&quot;&quot;</span>
+        <span class="c1"># 1. Reader follows publisher_beta to match the trigger criteria</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">subscribed_publishers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">publisher_beta</span><span class="p">)</span>
+
+        <span class="c1"># 2. Use force_login to cleanly authenticate the</span>
+        <span class="c1"># editor account with groups</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">force_login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">)</span>
+
+        <span class="c1"># 3. Generate the target view path URL pattern</span>
+        <span class="n">session_view_url</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span>
+            <span class="s1">&#39;LightFeed:publish_draft&#39;</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;article_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">article_draft</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+
+        <span class="c1"># 4. Perform the GET request simulation</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">session_view_url</span><span class="p">)</span>
+
+        <span class="c1"># 5. Check redirection flow state back to dashboard (302 Found)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_302_FOUND</span><span class="p">)</span>
+
+        <span class="c1"># 6. Assert Local Email send method fired successfully</span>
+        <span class="n">mock_send_mail</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+
+        <span class="c1"># 7. Assert Local Outbound POST API call out</span>
+        <span class="c1"># to X (Twitter) was triggered</span>
+        <span class="n">mock_requests_post</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+
+        <span class="c1"># 8. Check that the payload matches the target X API endpoint address</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">mock_requests_post</span><span class="o">.</span><span class="n">call_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;https://x.com&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">])</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Darren.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
