@@ -18,6 +18,8 @@ services:
 
   web:
     build: .
+    env_file:
+      - .env
     command: >
       sh -c "
       while ! python -c \"import socket; s=socket.socket(); s.settimeout(2); s.connect(('db', 3306))\" 2>/dev/null; do
