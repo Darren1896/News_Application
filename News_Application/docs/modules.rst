@@ -1,6 +1,7 @@
-News_Application
-================
+LightFeed
+=========
 
 .. toctree::
    :maxdepth: 4
 
+   LightFeed
