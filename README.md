@@ -69,20 +69,50 @@ News_Application/
   the author's own approved articles), `description`, `status`, `created_at`
 - **ResetToken** — password reset tokens tied to a `User`
 
+## Environment Variables
+
+Sensitive values (secret key, database credentials) are managed via a `.env`
+file that is **never committed to version control**. A template is provided:
+
+```bash
+cp .env.example .env
+```
+
+Then open `.env` and fill in your actual values:
+
+| Variable | Description | Example |
+|---|---|---|
+| `SECRET_KEY` | Django secret key | a long random string |
+| `DEBUG` | Enable debug mode | `True` for dev, `False` for production |
+| `ALLOWED_HOSTS` | Comma-separated allowed hosts | `localhost,127.0.0.1` |
+| `DB_NAME` | MySQL database name | `lightfeed_db` |
+| `DB_USER` | MySQL username | `root` |
+| `DB_PASSWORD` | MySQL password | your chosen password |
+| `DB_HOST` | MySQL host | `db` for Docker, `localhost` for local dev |
+| `DB_PORT` | MySQL port | `3306` |
+| `DEFAULT_FROM_EMAIL` | Sender address for emails | `updates@lightfeed.com` |
+
+Make sure `.env` is listed in your `.gitignore` — **do not commit real credentials
+to a public repository**.
+
 ## Running with Docker (recommended)
 
 1. Make sure Docker and docker-compose are installed.
-2. From the project root (same level as `manage.py`):
+2. Copy the environment template and fill in your values:
+   ```bash
+   cp .env.example .env
+   ```
+3. From the project root (same level as `manage.py`):
    ```bash
    docker-compose up --build
    ```
    The first run will take longer — MySQL needs to initialize a fresh
    data volume, and `web` will wait for it to be ready before starting.
-3. In a second terminal, apply migrations:
+4. In a **separate terminal** (keep the first terminal running), apply migrations:
    ```bash
    docker-compose exec web python manage.py migrate
    ```
-4. Visit **http://localhost:8000**
+5. Visit **http://localhost:8000**
 
 To stop:
 ```bash
@@ -96,10 +126,10 @@ docker-compose down -v
 
 ### Services
 
-| Service | Image           | Port  | Notes                                   |
-|---------|-----------------|-------|------------------------------------------|
-| `web`   | built from `Dockerfile` | 8000  | Django dev server, waits for `db` to be reachable before starting |
-| `db`    | `mysql:8.0`     | 3306  | Data persisted in a named volume (`db_data`) |
+| Service | Image | Port | Notes |
+|---------|-------|------|-------|
+| `web` | built from `Dockerfile` | 8000 | Django dev server, waits for `db` to be reachable before starting |
+| `db` | `mysql:8.0` | 3306 | Data persisted in a named volume (`db_data`) |
 
 ## Running Locally (without Docker)
 
@@ -109,11 +139,12 @@ docker-compose down -v
    source venv/bin/activate      # Windows: venv\Scripts\activate
    pip install -r requirements.txt
    ```
-2. Make sure a MySQL server is running locally and matches the credentials
-   in `News_Application/settings.py` (`DATABASES`). Note that `settings.py`
-   currently points `HOST` at `db`, the docker-compose service name — for
-   local (non-Docker) runs, change this to `localhost` (or your DB host).
-3. Apply migrations and run the server:
+2. Copy the environment template and fill in your values, setting `DB_HOST=localhost`:
+   ```bash
+   cp .env.example .env
+   ```
+3. Make sure a MySQL server is running locally matching your `.env` credentials.
+4. Apply migrations and run the server:
    ```bash
    python manage.py migrate
    python manage.py runserver
@@ -121,11 +152,18 @@ docker-compose down -v
 
 ## Running Tests
 
+Tests must be run with the Docker containers **already running** in a separate
+terminal. With `docker-compose up` active in one terminal, open a second terminal
+and run:
+
 ```bash
 docker-compose exec web python manage.py test LightFeed
 ```
 
-(or, outside Docker: `python manage.py test LightFeed`)
+To run tests locally (outside Docker):
+```bash
+python manage.py test LightFeed
+```
 
 ## API
 
@@ -144,7 +182,7 @@ make html
 ```
 (note on windows it's ".\make")
 
-###  View the Output
+### View the Output
 Once the build finishes successfully, open the generated homepage in your browser:
 
 Path: docs/_build/html/index.html
