@@ -20,6 +20,39 @@ from django.core.mail import EmailMessage
 
 
 def register_user(request):
+    """
+    Handle user registration via a POST form submission.
+
+    On GET requests, simply renders the registration page.
+
+    On POST requests, validates the submitted username, password, and
+    email, then creates a new user account. The user is assigned a role
+    based on the "role" field ("Editors", "Journalists", or default
+    "Readers"), placed into the corresponding Django Group, and that
+    Group is given the relevant model permissions (created if they
+    don't already exist):
+
+        - Editors: add/change/delete/view permissions on Publisher
+        - Journalists: add/change/delete/view permissions on Newsletter
+        - Readers (default): no extra permissions
+
+    Validation failures (empty username/password, duplicate username,
+    or duplicate email) re-render "register.html" with an "error"
+    message and do not create a user.
+
+    On success, the new user is logged in and redirected to the
+    "LightFeed:welcome" view.
+
+    Args:
+        request (HttpRequest): The incoming request. Expected POST
+            fields are "username", "password", "email", and "role".
+
+    Returns:
+        HttpResponse: A redirect to "LightFeed:welcome" on successful
+        registration, otherwise a rendered "register.html" page
+        (with an "error" context variable on validation failure, or
+        no extra context on initial GET).
+    """
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "").strip()
